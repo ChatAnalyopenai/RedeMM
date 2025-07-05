@@ -15,19 +15,31 @@ struct ContentView: View {
 
     var body: some View {
         NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        ItemDetailView(item: item)
-                    } label: {
-                        ItemRowView(item: item)
+            Group {
+                if items.isEmpty {
+                    ContentUnavailableView(
+                        "No Items",
+                        systemImage: "tray",
+                        description: Text("Add your first item to get started")
+                    )
+                } else {
+                    List {
+                        ForEach(items) { item in
+                            NavigationLink {
+                                ItemDetailView(item: item)
+                            } label: {
+                                ItemRowView(item: item)
+                            }
+                        }
+                        .onDelete(perform: deleteItems)
                     }
                 }
-                .onDelete(perform: deleteItems)
             }
+            .navigationTitle("Items")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     EditButton()
+                        .disabled(items.isEmpty)
                 }
                 ToolbarItem {
                     Button(action: {
@@ -41,7 +53,11 @@ struct ContentView: View {
                 AddItemView()
             }
         } detail: {
-            Text("Select an item")
+            ContentUnavailableView(
+                "Select an item",
+                systemImage: "list.bullet.rectangle",
+                description: Text("Choose an item from the list to view its details")
+            )
         }
     }
 
@@ -60,28 +76,35 @@ struct ItemRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                Text(item.title.isEmpty ? "Untitled" : item.title)
-                    .font(.headline)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(item.title.isEmpty ? "Untitled" : item.title)
+                        .font(.headline)
+                        .foregroundColor(item.title.isEmpty ? .secondary : .primary)
+                    
+                    if !item.description.isEmpty {
+                        Text(item.description)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                    }
+                }
+                
                 Spacer()
-                Text(item.category)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 2)
-                    .background(Color.blue.opacity(0.1))
-                    .cornerRadius(4)
+                
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(item.category)
+                        .font(.caption)
+                        .foregroundColor(.blue)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(4)
+                    
+                    Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .omitted))
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
             }
-            
-            if !item.description.isEmpty {
-                Text(item.description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-            }
-            
-            Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                .font(.caption2)
-                .foregroundColor(.secondary)
         }
         .padding(.vertical, 2)
     }
@@ -145,12 +168,19 @@ struct AddItemView: View {
     
     let categories = ["General", "Work", "Personal", "Study", "Health", "Finance", "Travel", "Other"]
     
+    var canSave: Bool {
+        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    
     var body: some View {
         NavigationView {
             Form {
                 Section(header: Text("Item Information")) {
                     TextField("Title", text: $title)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                    
                     TextField("Description", text: $description, axis: .vertical)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
                         .lineLimit(3...6)
                     
                     Picker("Category", selection: $category) {
@@ -158,6 +188,11 @@ struct AddItemView: View {
                             Text(category).tag(category)
                         }
                     }
+                    .pickerStyle(MenuPickerStyle())
+                }
+                
+                Section(footer: Text("A title is required to save the item.")) {
+                    // Empty section just for the footer
                 }
             }
             .navigationTitle("Add Item")
@@ -174,6 +209,7 @@ struct AddItemView: View {
                         addItem()
                         dismiss()
                     }
+                    .disabled(!canSave)
                 }
             }
         }
@@ -183,8 +219,8 @@ struct AddItemView: View {
         withAnimation {
             let newItem = Item(
                 timestamp: Date(),
-                title: title,
-                description: description,
+                title: title.trimmingCharacters(in: .whitespacesAndNewlines),
+                description: description.trimmingCharacters(in: .whitespacesAndNewlines),
                 category: category
             )
             modelContext.insert(newItem)

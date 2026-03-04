@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rafael Dalazen Araujo — iOS Developer</title>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --card: #1e1e1e;
+      --accent: #0a84ff;
+      --accent2: #30d158;
+      --text: #f2f2f7;
+      --muted: #8e8e93;
+      --border: #2c2c2e;
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    /* ── Animated gradient background ── */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at 20% 30%, rgba(10,132,255,.18) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 70%, rgba(48,209,88,.12) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      width: 100%;
+    }
+
+    /* ── Hero card ── */
+    .hero {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 48px 40px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 0 4px var(--card), 0 0 0 6px var(--border);
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .hero .role {
+      margin-top: 6px;
+      color: var(--accent);
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .hero .bio {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── Tag pills ── */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 22px;
+    }
+
+    .tag {
+      background: rgba(10,132,255,.15);
+      color: var(--accent);
+      border: 1px solid rgba(10,132,255,.35);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .tag.green {
+      background: rgba(48,209,88,.12);
+      color: var(--accent2);
+      border-color: rgba(48,209,88,.3);
+    }
+
+    /* ── Grid section ── */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 540px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero { padding: 36px 24px 32px; }
+      .hero h1 { font-size: 1.6rem; }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+    }
+
+    .card h2 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* ── Project card ── */
+    .project-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(48,209,88,.15);
+      color: var(--accent2);
+      border: 1px solid rgba(48,209,88,.3);
+    }
+
+    .project-desc {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .project-meta {
+      margin-top: 16px;
+      display: flex;
+      gap: 16px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .project-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ── Skill bars ── */
+    .skill { margin-bottom: 14px; }
+    .skill:last-child { margin-bottom: 0; }
+
+    .skill-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+
+    .skill-pct { color: var(--muted); }
+
+    .bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 1s ease;
+    }
+
+    /* ── Stats ── */
+    .stats {
+      display: flex;
+      gap: 16px;
+      justify-content: space-around;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ── Links ── */
+    .links {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .2s, transform .15s;
+    }
+
+    .link-btn:hover { opacity: .85; transform: translateY(-1px); }
+
+    .link-btn.primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .link-btn.secondary {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-top: 28px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="avatar">👨‍💻</div>
+      <h1>Rafael Dalazen Araujo</h1>
+      <p class="role">iOS Developer · Swift &amp; SwiftUI</p>
+      <p class="bio">
+        Desenvolvedor iOS apaixonado por experiências nativas de alta qualidade.
+        Especializado em SwiftUI, SwiftData e arquitetura moderna para Apple platforms.
+      </p>
+      <div class="tags">
+        <span class="tag">Swift</span>
+        <span class="tag">SwiftUI</span>
+        <span class="tag">SwiftData</span>
+        <span class="tag">Xcode</span>
+        <span class="tag green">iOS 18+</span>
+        <span class="tag green">iPadOS</span>
+      </div>
+      <div class="links">
+        <a class="link-btn primary" href="https://github.com/ChatAnalyopenai/RedeMM">
+          ⚙ Ver Projeto
+        </a>
+        <a class="link-btn secondary" href="https://github.com/ChatAnalyopenai">
+          ◉ GitHub
+        </a>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid">
+
+      <!-- Featured Project -->
+      <div class="card" style="grid-column: 1 / -1;">
+        <h2>🚀 Projeto em Destaque</h2>
+        <div class="project-name">
+          RedeMM <span class="badge">Ativo</span>
+        </div>
+        <p class="project-desc">
+          Aplicativo iOS/iPadOS para gerenciamento de itens com categorias, descrições e persistência
+          local. Desenvolvido com SwiftUI e SwiftData, sem dependências externas.
+        </p>
+        <div class="project-meta">
+          <span>🍎 iOS 18.5+</span>
+          <span>🔶 Swift 5.0</span>
+          <span>📦 SwiftData</span>
+          <span>🖼 SwiftUI</span>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="card">
+        <h2>🛠 Habilidades</h2>
+        <div class="skill">
+          <div class="skill-header"><span>Swift</span><span class="skill-pct">100%</span></div>
+          <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-header"><span>SwiftUI</span><span class="skill-pct">90%</span></div>
+          <div class="bar"><div class="bar-fill" style="width:90%"></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-header"><span>SwiftData</span><span class="skill-pct">85%</span></div>
+          <div class="bar"><div class="bar-fill" style="width:85%"></div></div>
+        </div>
+        <div class="skill">
+          <div class="skill-header"><span>Xcode</span><span class="skill-pct">90%</span></div>
+          <div class="bar"><div class="bar-fill" style="width:90%"></div></div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="card">
+        <h2>📊 Estatísticas</h2>
+        <div class="stats">
+          <div>
+            <div class="stat-value">100%</div>
+            <div class="stat-label">Swift</div>
+          </div>
+          <div>
+            <div class="stat-value">4</div>
+            <div class="stat-label">Telas</div>
+          </div>
+          <div>
+            <div class="stat-value">8</div>
+            <div class="stat-label">Categorias</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <p class="footer">Feito com ❤ por Rafael Dalazen Araujo · RedeMM © 2025</p>
+  </div>
+</body>
+</html>
